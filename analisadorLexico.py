@@ -44,7 +44,7 @@ def analisar_arquivo(file_path): # abre o arquivo e le linha por linha
                 palavras = linha.split()  # Separar a linha em palavras
                 for palavra in palavras:
                     tipo_token = token_type(palavra)
-                    print(f"Token: {palavra}, Tipo: {tipo_token}, Linha: {linha_atual}, Coluna: {col_atual}") # printa os tokens
+                    print(f"[ {palavra}, {tipo_token}, {linha_atual}, {col_atual} ]") # printa os tokens
                     col_atual += len(palavra) + 1  # Atualizar a coluna
                 linha_atual += 1  # Atualizar a linha
     except Exception as e:
