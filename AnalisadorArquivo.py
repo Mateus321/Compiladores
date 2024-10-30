@@ -7,7 +7,7 @@ from Biblioteca import (
 )
 from tratar_erros import tratar_erros, verificar_string
 
-
+# Faz uma busca pelo arquivo java
 def analisar_arquivo(file_path):
     if not os.path.exists(file_path):
         print(f"Erro: O arquivo '{file_path}' não foi encontrado!")
@@ -18,7 +18,8 @@ def analisar_arquivo(file_path):
             linha_atual = 1
             col_atual = 1
             token_atual = ""
-
+            # Inicializa a analise do arquivo na posição [1, 1]
+             
             print(f"Arquivo: {file_path}")
 
             while True:
