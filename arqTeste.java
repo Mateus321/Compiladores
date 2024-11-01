@@ -1,4 +1,4 @@
-int x = 10;
+int x = 1;
 while (x != 0) {
-    x > x - 12.12
+    x > x - 09 //comentario
 }

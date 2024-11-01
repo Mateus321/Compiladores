@@ -6,12 +6,21 @@ def tratar_erros(token):
         if any(not parte.isdigit() for parte in partes if parte):  # Ignora partes vazias e verifica se todas são dígitos
             return [f"Erro de número mal formatado: '{token}' - múltiplos pontos ou ponto no final."]
     
-    # Verifica se o token é um número misturado com letras
-    if any(char.isdigit() for char in token) and any(char.isalpha() for char in token):
-        return [f"Erro de número misturado com letras: '{token}'"]
+def verificar_token(token):
+    # Verifica se o token é um número misturado com letras, permitindo hexadecimais
+    if token.startswith('0x'):
+        # Verifica se todos os caracteres após '0x' são válidos em um número hexadecimal
+        if all(char in '0123456789ABCDEF' for char in token[2:]):
+            return [f"Token hexadecimal válido: '{token}'"]
+        else:
+            return [f"Erro de número hexadecimal mal formatado: '{token}' - caracteres inválidos."]
+    else:
+        # Verifica se o token é um número misturado com letras
+        if any(char.isalpha() for char in token) and any(char.isdigit() for char in token):
+            return [f"Token misturado válido: '{token}'"]
+        else:
+            return [f"Erro de token mal formatado: '{token}' - deve conter letras e números."]
 
-    # Se nenhum erro foi encontrado
-    return []
 
 def verificar_string(f, string_token, linha_atual, col_atual):
     while True:

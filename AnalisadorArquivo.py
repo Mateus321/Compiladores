@@ -74,6 +74,7 @@ def analisar_arquivo(file_path):
                         col_atual += 1
                     continue
 
+
                 # condicao para ver se o caractere é um espaço, quebra de linha ou símbolo especial
                 if (
                     caractere.isspace()
