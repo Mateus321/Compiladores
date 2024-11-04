@@ -63,7 +63,7 @@ def analisar_arquivo(file_path):
                             caractere = f.read(1)  # lê o próximo caractere
                             col_atual += 1
                         print(
-                            f"[ COMENTARIO, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]"
+                            f"[ 50, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]"
                         )
 
                     elif (
@@ -101,7 +101,7 @@ def analisar_arquivo(file_path):
                                 caractere = f.read(1)  # lê o próximo caractere
                                 col_atual += 1
                         print(
-                            f"[ COMENTARIO, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]"
+                            f"[ 50, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]"
                         )
 
                     else:

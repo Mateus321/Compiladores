@@ -40,6 +40,6 @@ def verificar_string(f, string_token, linha_atual, col_atual):
         string_token += prox_caractere
         if prox_caractere == '"':  # Fecha a string
             print(
-                f"[ STRING, '{string_token}', Linha: {linha_atual}, Coluna: {col_atual} ]"
+                f"[ 51, '{string_token}', Linha: {linha_atual}, Coluna: {col_atual} ]"
             )
             return string_token  # Retorna a string bem formada

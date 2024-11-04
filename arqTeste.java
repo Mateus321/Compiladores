@@ -11,6 +11,7 @@ for (int i = 0; i < 10; i += 1) {
     }
 }
 
+
 // Operações aritméticas
 x = x + (-15) / 5 + 1;
 y = y * 3.14 % 2.0;
