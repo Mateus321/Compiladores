@@ -8,7 +8,11 @@ OPERADOR_ARITMETICO = {
     "%": "5",
 }
 
-OPERADOR_LOGICO = {"||": "6", "&&": "7", "!": "8"}
+OPERADOR_LOGICO = {
+    "||": "6", 
+    "&&": "7", 
+    "!": "8"
+}
 
 OPERADOR_RELACIONAL = {
     "==": "9",
@@ -21,8 +25,8 @@ OPERADOR_RELACIONAL = {
 
 OPERADOR_ATRIBUICAO = {
     "=": "15",
-    "=+": "16",
-    "=-": "17",
+    "+=": "16",
+    "-=": "17",
     "*=": "18",
     "/=": "19",
     "%=": "20",
