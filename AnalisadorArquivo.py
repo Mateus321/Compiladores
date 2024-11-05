@@ -1,13 +1,15 @@
-#codigo indentado com o black
+# codigo indentado com o black
 
 import os
+import sys
 from TipoToken import token_type
 from Biblioteca import (
     OPERADOR_ARITMETICO,
     OPERADOR_RELACIONAL,
     SIMBOLOS_ACEITOS,
 )
-from tratar_erros import tratar_erros, verificar_string
+from tratar_erros import multi_pontos, verificar_string
+
 
 # Faz uma busca pelo arquivo java
 def analisar_arquivo(file_path):
@@ -29,7 +31,7 @@ def analisar_arquivo(file_path):
                 if not caractere:
                     if token_atual:
                         # Verifica outros tipos de erros no token
-                        erros = tratar_erros(token_atual)
+                        erros = multi_pontos(token_atual)
                         if erros:
                             for erro in erros:
                                 print(f"Erro encontrado: {erro}")
@@ -42,6 +44,38 @@ def analisar_arquivo(file_path):
                             )
                         token_atual = ""  # Reseta o token após a verificação
                     break
+                try:
+                    if caractere == "." and token_atual.replace(".", "").isdigit():
+                        if "." in token_atual:
+                            # Chama o multi_pontos para reportar o erro
+                            erros = multi_pontos(token_atual + caractere)
+                            if erros:
+                                print(
+                                    erros
+                                )  # Ou você pode lidar com o erro de outra forma
+                            continue  # Sai do loop atual para evitar continuar com o token inválido
+                        prox_caractere = f.read(1)
+                        if (
+                            prox_caractere.isdigit()
+                            or prox_caractere.isspace()
+                            or prox_caractere in SIMBOLOS_ACEITOS
+                        ):
+                            token_atual += caractere
+                            if prox_caractere.isdigit():
+                                token_atual += prox_caractere
+                                col_atual += 2
+                            else:
+                                f.seek(
+                                    f.tell() - 1
+                                )  # Reposiciona o ponteiro se for espaço ou símbolo
+                            continue
+                        else:
+                            f.seek(
+                                f.tell() - 1
+                            )  # Reposiciona o ponteiro se não for válido
+                except ValueError as e:
+                    print(e)
+                    sys.exit(1)
 
                 if caractere == "/":  # se o caracter for um barra
                     prox_caractere = f.read(1)  # le o proximo
@@ -100,10 +134,14 @@ def analisar_arquivo(file_path):
                                 )
                                 caractere = f.read(1)  # lê o próximo caractere
                                 col_atual += 1
+                        else:
+                            print(
+                                f"Erro encontrado: Erro de comentário de bloco não fechado: {comentario}"
+                            )
+                            return None  # Indica erro
                         print(
                             f"[ 50, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]"
                         )
-
                     else:
                         tipo_token = OPERADOR_ARITMETICO["/"]
                         print(
@@ -153,15 +191,22 @@ def analisar_arquivo(file_path):
                     or caractere in OPERADOR_RELACIONAL
                 ):
                     if token_atual:  # Se tem token acumulado
-                        erros = tratar_erros(token_atual)
+                        erros = multi_pontos(token_atual)
                         if erros:
                             for erro in erros:
                                 print(f"Erro encontrado: {erro}")
                             return  # Interrompe o processamento ao encontrar um erro
                         tipo_token = token_type(token_atual)
-                        print(
-                            f"[ {tipo_token}, '{token_atual}', Linha: {linha_atual}, Coluna: {col_atual - len(token_atual)} ]"
-                        )
+
+                        # adicona um 0 no final do token se for um float
+                        if tipo_token in ["44", "47"] and token_atual.endswith("."):
+                            print(
+                                f"[ {tipo_token}, '{token_atual}0', Linha: {linha_atual}, Coluna: {col_atual - len(token_atual)} ]"
+                            )
+                        else:
+                            print(
+                                f"[ {tipo_token}, '{token_atual}', Linha: {linha_atual}, Coluna: {col_atual - len(token_atual)} ]"
+                            )
                         token_atual = ""  # Reseta para o próximo token
 
                     if caractere in SIMBOLOS_ACEITOS:  # Verifica se é um símbolo
@@ -173,6 +218,9 @@ def analisar_arquivo(file_path):
                     # Verifica se o caractere é um operador aritmético ou um número negativo
                     elif caractere == "-" and not token_atual:
                         prox_caractere = f.read(1)
+                        while prox_caractere.isspace():
+                            prox_caractere = f.read(1)
+                            col_atual += 1
                         if prox_caractere.isdigit():
                             # Trata o número negativo como um único token
                             token_atual = caractere + prox_caractere

@@ -1,34 +1,32 @@
 from Biblioteca import PALAVRAS_RESERVADAS
 
-def tratar_erros(token):
-    # Verifica se o token é uma palavra reservada válida ou um comando dividido por pontos
-    partes = token.split(".")
-    if len(partes) > 1 and all(parte in PALAVRAS_RESERVADAS for parte in partes): 
-        return []  # Sem erro, todas as partes são palavras reservadas válidas
 
+def multi_pontos(token):
     # Verifica se o token contém múltiplos pontos, o que indica um número mal formatado
     if token.count(".") > 1:
-        partes = token.split(".")
-        if any(not parte.isdigit() for parte in partes if parte):  
-            return [f"Erro de número mal formatado: '{token}' - múltiplos pontos."]
+        raise ValueError(f"Erro de número mal formatado: '{token}' - múltiplos pontos.")
 
-    return []  # Sem erro
 
-    
 def verificar_token(token):
     # Verifica se o token é um número misturado com letras, permitindo hexadecimais
-    if token.startswith('0x'):
+    if token.startswith("0x"):
         # Verifica se todos os caracteres após '0x' são válidos em um número hexadecimal
-        if all(char in '0123456789ABCDEF' for char in token[2:]):
+        if all(char in "0123456789ABCDEF" for char in token[2:]):
             return [f"Token hexadecimal válido: '{token}'"]
         else:
-            return [f"Erro de número hexadecimal mal formatado: '{token}' - caracteres inválidos."]
+            return [
+                f"Erro de número hexadecimal mal formatado: '{token}' - caracteres inválidos."
+            ]
     else:
         # Verifica se o token é um número misturado com letras
-        if any(char.isalpha() for char in token) and any(char.isdigit() for char in token):
+        if any(char.isalpha() for char in token) and any(
+            char.isdigit() for char in token
+        ):
             return [f"Token misturado válido: '{token}'"]
         else:
-            return [f"Erro de token mal formatado: '{token}' - deve conter letras e números."]
+            return [
+                f"Erro de token mal formatado: '{token}' - deve conter letras e números."
+            ]
 
 
 def verificar_string(f, string_token, linha_atual, col_atual):

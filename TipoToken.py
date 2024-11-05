@@ -12,6 +12,10 @@ from Biblioteca import (
 
 # funcao que vai determinar o tipo do token
 def token_type(word):
+    # verificar se e float
+    if "." in word and all(char.isdigit() for char in word.replace(".", "", 1)):
+        return "47"
+
     if word in OPERADOR_ARITMETICO:
         return OPERADOR_ARITMETICO[word]  # retorna o tipo do operador aritmetico
 
@@ -51,16 +55,15 @@ def token_type(word):
     elif word.isdigit():
         return "46"
 
-    elif "." in word and all(char.isdigit() for char in word.replace(".", "", 1)):
-        return "47"
-
+    # verificar se e um numero hexadecimal
     elif word.startswith("0x") and all(
         char.isdigit() or char.lower() in "abcdef" for char in word[2:]
     ):
         return "48"
 
+    # verificar se e uma variavel
     elif word[0].isdigit():
-        raise ValueError("ERRO: A variável não pode começar com um número")
+        raise ValueError("ERRO: A variável está declarada errada", {word})
 
     else:
         return "49"  # se nao e operador e nem palavra reservada, entao e uma variavel
