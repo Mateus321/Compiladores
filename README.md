@@ -1,10 +1,10 @@
 # Analisador Léxico (Parser)
 
-## **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***Descrição**\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
+## Descrição
 
 Este projeto é fruto da disciplina de Compiladores do curso de graduação em Engenharia de Computação do Centro Federal de Educação Tecnológica de Minas Gerais (CEFET-MG) campus Leopoldina. Ele consiste em um analisador léxico (lexer) que faz parte de um compilador. O analisador léxico desenvolvido em Python será responsável por ler cada caractere do arquivo em Java-- e dividir o texto em tokens, que são as unidades essenciais do código.
 
-## **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***Funcionalidades **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
+## Funcionalidades
 
 - Identificação de operadores aritméticos, lógicos, relacionais e de atribuição;
 - Reconhecimento de símbolos aceitos e palavras reservadas;
@@ -15,7 +15,7 @@ Este projeto é fruto da disciplina de Compiladores do curso de graduação em E
 - Execução via terminal
 - entre outros...
 
-## **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***Estrutura do Projeto**\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
+## Estrutura do Projeto
 
 ## `AnalisadorArquivo.py`
 
@@ -89,7 +89,7 @@ O arquivo também tem comentários que mostram de forma pratica o identificador 
 - **Palavras reservadas** (`for`, `if`, `else`, `while`, `system`, `print`, `scan`)
 - **Números variados** (decimal, octal `0123`, hexadecimal `0x7B`, float `123.45`)
 
-## **\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***Como Utilizar o Analisador Léxico**\*\***\*\*\*\***\*\***\_\_\_**\*\***\*\*\*\***\*\***
+## Como Utilizar o Analisador Léxico
 
 1. Primeiro, você vai precisar de um ambiente para rodar o projeto. Recomendamos usar o **VSCode**.
 2. Depois, instale o **Python** e o **Git** na sua máquina, você pode fazer pesquisar sobre em: https://www.python.org/downloads/ e https://git-scm.com/downloads
