@@ -12,8 +12,8 @@ for (int i = 0; i < 10; i += 1) {
 }
 
 // Operações aritméticas
-x = x + (- 15) / 5 + 1;
-y = y * 3.14 % 2.0;
+x = x + (-15) / 5 + 1;
+y = y * 3.0 % 2.0;
 
 // Operadores lógicos
 if (x != 0 && y > 1 || msg == "/Hello") {
@@ -28,7 +28,7 @@ float decimalFloat = 123.45; // Número flutuante
 float decimalFloat2 = 103.;  // Número flutuante adicona um zero no final
 
 // Entrada e saída
-system.out.print("Digite um valor: ");
+system.out.print("Digite um valor:" );
 int input = system.in.scan();
 
 // Estrutura de repetição while

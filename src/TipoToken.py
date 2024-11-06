@@ -34,14 +34,6 @@ def token_type(word):
     elif word in PALAVRAS_RESERVADAS:
         return PALAVRAS_RESERVADAS[word]  # retorna o tipo da palavra reservada
 
-    # Verificar se é um número negativo
-    elif word.startswith("-") and len(word) > 1:
-        if word[1:].isdigit():
-            return "43"
-        
-        elif "." in word[1:] and all(char.isdigit() for char in word[1:].replace(".", "", 1)):
-            return "44"
-
     # se um numero comecar com 0 e tiver pelo menos um digito de 0 a 7 ele e octal
     elif (
         word.startswith("0")

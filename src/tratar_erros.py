@@ -2,7 +2,6 @@ from Biblioteca import PALAVRAS_RESERVADAS
 
 
 def multi_pontos(token):
-    
     # Verifica se o token contém múltiplos pontos, o que indica um número mal formatado
     if token.count(".") > 1:
         raise ValueError(f"Erro de número mal formatado: '{token}' - múltiplos pontos.")
@@ -40,10 +39,14 @@ def verificar_string(f, string_token, linha_atual, col_atual):
         prox_caractere = f.read(1)
         
         if not prox_caractere:  # Verifica final do arquivo sem fechar string
-            print(f"Erro encontrado: Erro de string não fechada: {string_token}")
+            print(f"Erro encontrado: Erro de string não fechada: Linha: {linha_atual}, Coluna: {col_atual}")
             return None  # Indica erro
         
         string_token += prox_caractere
+        
+        if prox_caractere == ';':  # Verifica se encontrou um ponto e vírgula
+                print(f"Erro encontrado: Erro de string não fechada Linha: {linha_atual}, Coluna: {col_atual}")
+                return None  # Indica erro 
         
         if prox_caractere == '"':  # Fecha a string
             print(f"[ 51, '{string_token}', Linha: {linha_atual}, Coluna: {col_atual} ]")
