@@ -1,6 +1,6 @@
 int x = 1;                   
 float y = 2.5;               
-string msg = "Hello, World!"; 
+string msg = "\n Hello, \n World!"; 
 
 // Estruturas de repetição e condicionais
 for (int i = 0; i < 10; i += 1) {

@@ -2,13 +2,15 @@
 
 import os
 import sys
+import string
 from TipoToken import token_type
 from Biblioteca import (
     OPERADOR_ATRIBUICAO,
     OPERADOR_ARITMETICO,
     OPERADOR_RELACIONAL,
     SIMBOLOS_ACEITOS,
-)
+    CARACTERES_INVALIDOS,
+) 
 from tratar_erros import multi_pontos, verificar_string
 
 #---------------------------------Função para analisar o arquivo---------------------------------
@@ -90,8 +92,9 @@ def analisar_arquivo(file_path):
                     print (f"Erro encontrado: {str(e)}") # se for mais de um ponto ele retorna um erro
                     sys.exit(1)
                     
-                    
+                
                 #---------------------------------Tratamento de comentários / e /*  ---------------------------------
+                
                 
                 if caractere == "/": # se o caractere for uma barra
                     prox_caractere = f.read(1)

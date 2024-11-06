@@ -60,6 +60,17 @@ SIMBOLOS_ACEITOS = {
     ".": "42",
 }
 
+CARACTERES_INVALIDOS = { 
+    "#",
+    "$",
+    "%",
+    "&",
+    "?",
+    "|",
+    "~",
+    "@",
+}
+
 # ADICAO = 1
 # SUBTRACAO = 2
 # MULTIPLICACAO = 3

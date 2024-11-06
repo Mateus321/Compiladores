@@ -7,6 +7,7 @@ from Biblioteca import (
     OPERADOR_ATRIBUICAO,
     SIMBOLOS_ACEITOS,
     PALAVRAS_RESERVADAS,
+    CARACTERES_INVALIDOS,
 )  # chama a biblioteca que criamos
 
 
@@ -54,5 +55,8 @@ def token_type(word):
     elif word[0].isdigit():
         raise ValueError("ERRO: A variável está declarada errada", {word})
 
+    elif any(char in CARACTERES_INVALIDOS for char in word):
+        raise ValueError("ERRO", {word})
+                
     else:
         return "49"  # se nao e operador e nem palavra reservada, entao e uma variavel
