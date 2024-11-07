@@ -2,7 +2,6 @@
 
 import os
 import sys
-import string
 from TipoToken import token_type
 from Biblioteca import (
     OPERADOR_ATRIBUICAO,
@@ -92,7 +91,7 @@ def analisar_arquivo(file_path):
                     print (f"Erro encontrado: {str(e)}") # se for mais de um ponto ele retorna um erro
                     sys.exit(1)
                     
-                
+                    
                 #---------------------------------Tratamento de comentários / e /*  ---------------------------------
                 
                 
@@ -209,7 +208,7 @@ def analisar_arquivo(file_path):
                         col_atual += 1
                     
                 #---------------------------------Tratamento de espaços, novas linhas e símbolos---------------------------------
-                    
+                
                 if (
                     caractere.isspace()
                     or caractere in SIMBOLOS_ACEITOS

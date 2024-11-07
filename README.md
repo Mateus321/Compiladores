@@ -94,5 +94,5 @@ O arquivo também tem comentários que mostram de forma pratica o identificador 
 1. Primeiro, você vai precisar de um ambiente para rodar o projeto. Recomendamos usar o **VSCode**.
 2. Depois, instale o **Python** e o **Git** na sua máquina, você pode fazer pesquisar sobre em: https://www.python.org/downloads/ e https://git-scm.com/downloads
 3. Com o Python e Git instalado, clone o repositório do GitHub. No terminal, digite: `git clone https://github.com/Mateus321/Compiladores.git`
-4. Para executar o analisador, abra o terminal e digite: `python3 src/main.py arqTeste.java`
-5. Isso vai mostrar a análise do código no terminal. Um arquivo de teste (`arqTeste.java`) já está incluído, mas você pode usar qualquer outro arquivo seguindo o mesmo padrão: `python3 src/main.py nomedoseuarquivo.java`
+4. Para executar o analisador, abra o terminal e digite: `python main.py arqTeste.java`
+5. Isso vai mostrar a análise do código no terminal. Um arquivo de teste (`arqTeste.java`) já está incluído, mas você pode usar qualquer outro arquivo seguindo o mesmo padrão: `python main.py nomedoseuarquivo.java`
