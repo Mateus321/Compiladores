@@ -1,5 +1,9 @@
 # Analisador Léxico (Parser)
 
+Alunos: Mateus Pereira Fernandes e Yuri Moreira Ferreia
+Disciplina: G03COMP0.02 - COMPILADORES
+Instituição: Centro Federal de Educação Tecnológica de Minas Gerais (CEFET-MG)
+
 ## Descrição
 
 Este projeto é fruto da disciplina de Compiladores do curso de graduação em Engenharia de Computação do Centro Federal de Educação Tecnológica de Minas Gerais (CEFET-MG) campus Leopoldina. Ele consiste em um analisador léxico (lexer) que faz parte de um compilador. O analisador léxico desenvolvido em Python será responsável por ler cada caractere do arquivo em Java-- e dividir o texto em tokens, que são as unidades essenciais do código.
