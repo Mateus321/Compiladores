@@ -14,6 +14,9 @@ from tratar_erros import multi_pontos, verificar_string
 
 #---------------------------------Função para analisar o arquivo---------------------------------
 
+lista_de_tokens = []
+
+
 def analisar_arquivo(file_path):
     
     #se o arquivo não existir, ele retorna um erro
@@ -47,7 +50,8 @@ def analisar_arquivo(file_path):
                         else:
                             # Se não tem erro imprime
                             tipo_token = token_type(token_atual)
-                            print(f"[a {tipo_token}, '{token_atual}', Linha: {linha_atual}, Coluna: {col_atual - len(token_atual)} ]")
+                            tupla_token = (tipo_token, token_atual, linha_atual, col_atual - len(token_atual))
+                            lista_de_tokens.append(tupla_token)
                             
                         token_atual = ""  # Reseta o token após a verificação
                     break     
@@ -109,7 +113,8 @@ def analisar_arquivo(file_path):
                             caractere = f.read(1)  
                             col_atual += 1
                             
-                        print(f"[ 50, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = ("50", comentario, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         
                     elif (prox_caractere == "*"):  # se o próximo for um asterisco (início de um comentário de bloco)
                         comentario = "/*"
@@ -142,18 +147,22 @@ def analisar_arquivo(file_path):
                             print(f"Erro encontrado: Erro de comentário de bloco não fechado: Linha: {linha_atual}, Coluna: {col_atual}")
                             return None  # Indica erro
                             
-                        print(f"[ 50, '{comentario}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = ("50", comentario, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         
                     #---------------------------------Tratamento de operadores de atribuição---------------------------------
                     
                     elif prox_caractere == "=":  # se o próximo for um igual
                         tipo_token = OPERADOR_ATRIBUICAO["/="]
-                        print(f"[ {tipo_token}, '{caractere + prox_caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere + prox_caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         col_atual += 1
                         
                     else:
                         tipo_token = OPERADOR_ARITMETICO["/"]
-                        print(f"[ {tipo_token}, '{caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
+                        
                         f.seek(f.tell() - 1)
                         continue
                         
@@ -164,9 +173,12 @@ def analisar_arquivo(file_path):
                 if caractere == '"':
                     string_token = verificar_string(f, caractere, linha_atual, col_atual)
                     
-                    if not string_token:  # Se retornou None, houve um erro
+                    if string_token[0] == None:  # Se retornou None, houve um erro
                         return
-                        
+                    
+                    
+                    lista_de_tokens.append(string_token)  
+                    
                     col_atual += len(string_token)  # Atualiza a coluna com o comprimento da string
                     continue
                     
@@ -177,13 +189,15 @@ def analisar_arquivo(file_path):
                     
                     if prox_caractere == "=": # Entra no caso de ser >= ou <=
                         tipo_token = OPERADOR_RELACIONAL[caractere + prox_caractere]  # aqui ele pega os dois e tenta encontrar no operador relacional
-                        print(f"[ {tipo_token}, '{caractere + prox_caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere + prox_caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         col_atual += 2  # >= e <= pula duas colunas
                         
                     else:
                         # Entra se for so > ou <
                         tipo_token = OPERADOR_RELACIONAL[caractere]
-                        print(f"[ {tipo_token}, '{caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         caractere = prox_caractere
                         col_atual += 1
                         
@@ -194,7 +208,8 @@ def analisar_arquivo(file_path):
                     
                     if prox_caractere == "=": # Entra no caso de operador de atribuição
                         tipo_token = OPERADOR_ATRIBUICAO[caractere + prox_caractere]  # aqui ele pega os dois e tenta encontrar no operador relacional
-                        print(f"[ {tipo_token}, '{caractere + prox_caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere + prox_caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         col_atual += 2  # += e -= pula duas colunas
                         
                     elif caractere == "/":
@@ -203,7 +218,8 @@ def analisar_arquivo(file_path):
                     else:
                         # Entra se for so operador aritmético
                         tipo_token = OPERADOR_ARITMETICO[caractere] 
-                        print(f"[ {tipo_token}, '{caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                         caractere = prox_caractere
                         col_atual += 1
                     
@@ -225,16 +241,19 @@ def analisar_arquivo(file_path):
                         
                         # adicona um 0 no final do token se for um float
                         if tipo_token in ["47"]:
-                            print(f"[ {tipo_token}, '{token_atual}0', Linha: {linha_atual}, Coluna: {col_atual - len(token_atual)} ]")
+                            tupla_token = (tipo_token, token_atual + "0", linha_atual, col_atual - len(token_atual))
+                            lista_de_tokens.append(tupla_token)
                             
                         else:
-                            print(f"[ {tipo_token}, '{token_atual}', Linha: {linha_atual}, Coluna: {col_atual - len(token_atual)} ]")
+                            tupla_token = (tipo_token, token_atual, linha_atual, col_atual - len(token_atual))
+                            lista_de_tokens.append(tupla_token)
                         
                         token_atual = ""  # Reseta para o próximo token
                         
                     if caractere in SIMBOLOS_ACEITOS:  # Verifica se é um símbolo
                         tipo_token = SIMBOLOS_ACEITOS[caractere]
-                        print(f"[ {tipo_token}, '{caractere}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+                        tupla_token = (tipo_token, caractere, linha_atual, col_atual)
+                        lista_de_tokens.append(tupla_token)
                     
                     #---------------------------------Tratamento de espaços e novas linhas---------------------------------
                     
@@ -250,8 +269,8 @@ def analisar_arquivo(file_path):
                     token_atual += caractere  # Acumula o caractere no token atual
                     
                 col_atual += 1  # Atualiza coluna para cada caractere
-                
-        print("Final da análise léxica")
+        
+        return lista_de_tokens        
         
     except Exception as e:
         print(f"Erro ao ler o arquivo: {str(e)}")

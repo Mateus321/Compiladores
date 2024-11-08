@@ -1,1 +1,1 @@
-"teste \n teste"
+system.out.print("Digite \n um valor:" );

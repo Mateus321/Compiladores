@@ -1,6 +1,6 @@
 int x = 1;                   
-float y = 2.5;               
-string msg = "\n Hello, \n World!"; 
+float y = 2.5; 
+string = "Hello World!";              
 
 // Estruturas de repetição e condicionais
 for (int i = 0; i < 10; i += 1) {
@@ -16,7 +16,7 @@ x = x + (-15) / 5 + 1;
 y = y * 3.0 % 2.0;
 
 // Operadores lógicos
-if (x != 0 && y > 1 || msg == "/Hello") {
+if (x != 0 && y > 1 || msg == " \n Hello") {
     x = x - 1;
 }
 

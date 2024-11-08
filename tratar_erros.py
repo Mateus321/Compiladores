@@ -34,13 +34,22 @@ def verificar_token(token):
             
             
 def verificar_string(f, string_token, linha_atual, col_atual):
-    
     while True:
         prox_caractere = f.read(1)
+        
         
         if not prox_caractere:  # Verifica final do arquivo sem fechar string
             print(f"Erro encontrado: Erro de string não fechada: Linha: {linha_atual}, Coluna: {col_atual}")
             return None  # Indica erro
+        
+        if prox_caractere == '\\':
+            p_carac = f.read(1)
+            prox_caractere = ""
+            if  p_carac == ('n' or 't'):
+                if p_carac == 'n':
+                    string_token += "\n"
+                elif p_carac == 't':
+                    string_token += "\t"
             
         string_token += prox_caractere
         
@@ -49,11 +58,7 @@ def verificar_string(f, string_token, linha_atual, col_atual):
                 return None  # Indica erro 
                 
         if prox_caractere == '"':  # Fecha a string
-            print(f"[ 51, '{string_token}', Linha: {linha_atual}, Coluna: {col_atual} ]")
-            return string_token  # Retorna a string bem formada
-            
-        if prox_caractere == '\\':
-            prox_caractere2 = f.read(1)
-            force_barra = r"\"
-            string_token = force_barra + prox_caractere2
-            
+            #print(f"[ 51, '{string_token}', Linha: {linha_atual}, Coluna: {col_atual} ]")
+            tupla_tokem = ("51", string_token, linha_atual, col_atual)
+            return tupla_tokem  # Retorna a string bem formada
+
