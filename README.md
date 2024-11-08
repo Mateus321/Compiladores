@@ -1,7 +1,9 @@
 # Analisador Léxico (Parser)
 
-Alunos: Mateus Pereira Fernandes e Yuri Moreira Ferreia
+Alunos: Mateus Pereira Fernandes e Yuri Moreira Ferreira
+
 Disciplina: G03COMP0.02 - COMPILADORES
+
 Instituição: Centro Federal de Educação Tecnológica de Minas Gerais (CEFET-MG)
 
 ## Descrição
