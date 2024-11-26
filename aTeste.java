@@ -1,1 +1,4 @@
-system.out.print("Digite \n um valor:" );
+ int main() {
+    int x = 5;
+    x = x + 1;           
+}

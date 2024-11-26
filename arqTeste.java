@@ -1,3 +1,4 @@
+int main() {
 int x = 1;                   
 float y = 2.5; 
 string = "Hello World!";              
@@ -46,3 +47,4 @@ x %= 10;
 
 // Delimitadores e separadores
 { ; , . }
+}
