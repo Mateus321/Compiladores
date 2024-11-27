@@ -71,6 +71,12 @@ CARACTERES_INVALIDOS = {
     "@",
 }
 
+CARACTERE_COMENTARISO = {
+    "//": "52",
+    "/*" : "50",
+    "*/" : "53",    
+}
+
 # ADICAO = 1
 # SUBTRACAO = 2
 # MULTIPLICACAO = 3

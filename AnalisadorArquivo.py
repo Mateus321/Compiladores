@@ -113,8 +113,8 @@ def analisar_arquivo(file_path):
                             caractere = f.read(1)  
                             col_atual += 1
                             
-                        tupla_token = ("50", comentario, linha_atual, col_atual)
-                        lista_de_tokens.append(tupla_token)
+                        # tupla_token = ("50", comentario, linha_atual, col_atual)
+                        # lista_de_tokens.append(tupla_token)
                         
                     elif (prox_caractere == "*"):  # se o próximo for um asterisco (início de um comentário de bloco)
                         comentario = "/*"
@@ -127,7 +127,7 @@ def analisar_arquivo(file_path):
                                 col_atual += 1
                                 
                                 if (prox_caractere == "/"):  # encontrou o final do comentário de bloco
-                                    comentario += "*/"
+                                    comentario += "/"
                                     break
                                 
                                 else:

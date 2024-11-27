@@ -1,4 +1,5 @@
  int main() {
-    int x = 5;
-    x = x + 1;           
+    system.out.println("Hello World");
+    int x = 5; /*
+    x = x + 1;*/     
 }

@@ -13,6 +13,7 @@ from Biblioteca import (
     OPERADOR_ATRIBUICAO,
     PALAVRAS_RESERVADAS,
     SIMBOLOS_ACEITOS,
+    CARACTERE_COMENTARISO,
 )
 
 # inverter dicionario para saber o tipo 
@@ -29,6 +30,7 @@ for dic in [
     OPERADOR_ATRIBUICAO,
     PALAVRAS_RESERVADAS,
     SIMBOLOS_ACEITOS,
+    CARACTERE_COMENTARISO,
 ]:
     TOKEN_TYPE_MAPPING.update(inverter_dicionario(dic))
 
@@ -321,9 +323,9 @@ class Parser:
 
     def parse_restoMult(self):
         """<restoMult> -> '*' <uno> <restoMult> | '/' <uno> <restoMult> | '%' <uno> <restoMult> | & ;"""
-        while self.get_token_type(self.current_token) in ('*', '/', '%'):
+        while self.get_token_type(self.current_token) in ('*', '/', '%', '/*'):
             self.advance()
-            self.parse_uno()
+            self.parse_uno()        
 
     def parse_uno(self):
         """<uno> -> '+' <uno> | '-' <uno> | <fator> ;"""
