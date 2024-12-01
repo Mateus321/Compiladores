@@ -147,7 +147,20 @@ def analisar_arquivo(file_path):
                             print(f"Erro encontrado: Erro de comentário de bloco não fechado: Linha: {linha_atual}, Coluna: {col_atual}")
                             return None  # Indica erro
                             
-                        tupla_token = ("50", comentario, linha_atual, col_atual)
+                        if comentario.startswith("//"):  # Se for um comentário de linha
+                            tupla_token = ("50", comentario, linha_atual, col_atual)
+                        
+                        elif comentario.startswith("/*") and comentario.endswith("*/"):  # Se for um comentário de bloco válido
+                            tupla_token = ("51", comentario, linha_atual, col_atual)
+                        
+                        elif comentario.startswith("/*") and not comentario.endswith("*/"):  # Se for um comentário de bloco não fechado
+                            print(f"Erro encontrado: Comentário de bloco não fechado. Linha: {linha_atual}, Coluna: {col_atual}")
+                            return None  # Indica erro
+
+                        else:  # Caso tenha algum outro tipo de sequência inesperada
+                            print(f"Erro: Token inesperado encontrado. Linha: {linha_atual}, Coluna: {col_atual}")
+                            return None  # Indica erro
+                        
                         lista_de_tokens.append(tupla_token)
                         
                     #---------------------------------Tratamento de operadores de atribuição---------------------------------

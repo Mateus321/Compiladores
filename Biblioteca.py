@@ -72,9 +72,8 @@ CARACTERES_INVALIDOS = {
 }
 
 CARACTERE_COMENTARISO = {
-    "//": "52",
-    "/*" : "50",
-    "*/" : "53",    
+    "//": "50",
+    "/**/" : "52",   
 }
 
 # ADICAO = 1
