@@ -1,5 +1,6 @@
- int main() {
-    system.out.println("Hello World");
-    int x = 5; /*
-    x = x + 1;*/     
+int main() {
+
+    for (int i = 0; i < 10; i) {
+        system.out.print("Valor i: ", i);
+    }
 }

@@ -1,8 +1,8 @@
 #tokens = lista de toknes no lexer
-#current_token = o token que ta sendo lido no meomento
+#token_atual = o token que ta sendo lido no meomento
 #pos = posicao do token atual na lista
-#advance = avanca para o proximo token
-#get_token_type = pega o tipo do token
+#avanca = avanca para o proximo token
+#get_tipo_token = pega o tipo do token
 #match = verifica se o token atual é do tipo esperado e avanca
 #error = lanca erro de sintaxe
 
@@ -48,68 +48,69 @@ TOKEN_TYPE_MAPPING.update({
 class Parser:
     def __init__(self, tokens):
         self.tokens = tokens  # Lista de tokens (tuplas)
-        self.current_token = None  # Token atual (tupla)
+        self.token_atual = None  # Token atual (tupla)
         self.pos = -1  # Posição atual na lista de tokens
-        self.advance()  # Avança para o primeiro token
+        self.avanca()  # Avança para o primeiro token
 
-    def advance(self):
+    def avanca(self):
         """Avança para o próximo token."""
         self.pos += 1
         if self.pos < len(self.tokens):
-            self.current_token = self.tokens[self.pos]
+            self.token_atual = self.tokens[self.pos]
         else:
-            self.current_token = None  # Fim dos tokens
+            self.token_atual = None  # Fim dos tokens
+            print("Fim dos tokens")
                 
-    def get_token_type(self, token):
+    def get_tipo_token(self, token):
         """Obtém o tipo do token a partir do código do token."""
         if token is None:
             return None
         token_code = token[0]
-        token_type = TOKEN_TYPE_MAPPING.get(token_code)
-        if token_type is None:
+        tipo_token = TOKEN_TYPE_MAPPING.get(token_code)
+        if tipo_token is None:
             self.error(f"Código de token desconhecido: {token_code}")
-        return token_type
+        return tipo_token
 
-    def get_token_value(self, token):
+    def get_valor_token(self, token):
         """Obtém o valor do token."""
         if token is None:
             return None
         return token[1]
 
-    def match(self, expected_type):
+    def match(self, tipo_esperado):
         """Verifica se o token atual é do tipo esperado e avança."""
-        actual_type = self.get_token_type(self.current_token)
-        if actual_type == expected_type:
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual == tipo_esperado:
+            self.avanca()
         else:
-            expected_value = expected_type
-            actual_value = actual_type if actual_type else 'EOF'
-            self.error(f"Esperado '{expected_value}', encontrado '{actual_value}'")
+            valor_esperado = tipo_esperado
+            tipo_atual = tipo_atual if tipo_atual else 'EOF'
+            self.error(f"Esperado '{valor_esperado}', encontrado '{tipo_atual}'")
 
 
     def error(self, message):
-        """Lança uma exceção de erro de sintaxe."""
-        line = self.current_token[2] if self.current_token else 'EOF'
-        column = self.current_token[3] if self.current_token else ''
-        raise Exception(f"Erro de sintaxe na linha {line}, coluna {column}: {message}")
+        """Lança uma exceção de erro de"""
+        linha = self.token_atual[2] if self.token_atual else 'EOF'
+        coluna = self.token_atual[3] if self.token_atual else ''
+        raise Exception(f"Erro de sintaxe na linha {linha}, coluna {coluna}: {message}")
 
     #aqui comeca as funcoes da gramatica 
 
     def parse_function_star(self):
-        """<function*> -> <type> 'IDENT' '(' ')' <bloco> ;"""
+        """<function*> -> <type> 'IDENT' '(' ')' <bloco> ;""" #funcao principal comeca
         self.parse_type()
         self.match('IDENT')
         self.match('(')
         self.match(')')
         self.parse_bloco()
-        if self.current_token is not None:
+        if self.token_atual is not None:
             self.error("Tokens extras após o fim da função")
 
     def parse_type(self):
         """<type> -> 'int' | 'float' | 'string' ;"""
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('int', 'float', 'string'):
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('int', 'float', 'string'):
+            self.avanca()
         else:
             self.error("Tipo esperado ('int', 'float' ou 'string')")
 
@@ -121,51 +122,51 @@ class Parser:
 
     def parse_stmtList(self):
         """<stmtList> -> <stmt> <stmtList> | & ;"""
-        while self.current_token and self.is_first_of_stmt():
+        while self.token_atual and self.is_first_of_stmt():
             self.parse_stmt()
         # epsilon é permitido
 
     def is_first_of_stmt(self):
         """Verifica se o token atual pode iniciar uma instrução."""
-        first_tokens = {
+        primeiro_token = {
             'for', 'system', 'while', 'if', '{', 'break', 'continue',
             'int', 'float', 'string', 'IDENT', ';'
         }
-        current_type = self.get_token_type(self.current_token)
-        return current_type in first_tokens
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        return tipo_atual in primeiro_token
 
     def parse_stmt(self):
         """<stmt> -> várias alternativas conforme a gramática."""
-        current_type = self.get_token_type(self.current_token)
-        if current_type == 'for':
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual == 'for':
             self.parse_forStmt()
-        elif current_type == 'system':
+        elif tipo_atual == 'system':
             self.parse_ioStmt()
-        elif current_type == 'while':
+        elif tipo_atual == 'while':
             self.parse_whileStmt()
-        elif current_type == 'if':
+        elif tipo_atual == 'if':
             self.parse_ifStmt()
-        elif current_type == '{':
+        elif tipo_atual == '{':
             self.parse_bloco()
-        elif current_type == 'break':
-            self.advance()
+        elif tipo_atual == 'break':
+            self.avanca()
             self.match(';')
-        elif current_type == 'continue':
-            self.advance()
+        elif tipo_atual == 'continue':
+            self.avanca()
             self.match(';')
-        elif current_type in ('int', 'float', 'string'):
-            self.parse_declaration()
-        elif current_type == 'IDENT':
+        elif tipo_atual in ('int', 'float', 'string'):
+            self.parse_declaracao()
+        elif tipo_atual == 'IDENT':
             # Verifica se é uma atribuição
-            next_token_type = self.get_token_type(self.tokens[self.pos + 1]) if (self.pos + 1) < len(self.tokens) else None
-            if next_token_type in ('=', '+=', '-=', '*=', '/=', '%='):
+            next_tipo_token = self.get_tipo_token(self.tokens[self.pos + 1]) if (self.pos + 1) < len(self.tokens) else None
+            if next_tipo_token in ('=', '+=', '-=', '*=', '/=', '%='):
                 self.parse_atrib()
                 self.match(';')
             else:
                 self.parse_expr()
                 self.match(';')
-        elif current_type == ';':
-            self.advance()
+        elif tipo_atual == ';':
+            self.avanca()
         else:
             self.error("Instrução não é válida")
             
@@ -177,31 +178,31 @@ class Parser:
         
     def parse_opAtrib(self):
         """<opAtrib> -> '=' | '+=' | '-=' | '*=' | '/=' | '%='"""
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('=', '+=', '-=', '*=', '/=', '%='):
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('=', '+=', '-=', '*=', '/=', '%='):
+            self.avanca()
         else:
             self.error("Operador de atribuição esperado")
   
-    def parse_declaration(self):
-        """<declaration> -> <type> <initDeclaratorList> ';' ;"""
+    def parse_declaracao(self):
+        """<declaracao> -> <type> <lista_declarador_iniciado> ';' ;"""
         # print("Entrou")
         self.parse_type()
-        self.parse_initDeclaratorList()
+        self.parse_lista_declarador_iniciado()
         self.match(';')
         
-    def parse_initDeclaratorList(self):
-        """<initDeclaratorList> -> <initDeclarator> {',' <initDeclarator>}"""
-        self.parse_initDeclarator()
-        while self.get_token_type(self.current_token) == ',':
-            self.advance()
-            self.parse_initDeclarator()
+    def parse_lista_declarador_iniciado(self):
+        """<lista_declarador_iniciado> -> <declaracao_inicial> {',' <declaracao_inicial>}"""
+        self.parse_declaracao_inicial()
+        while self.get_tipo_token(self.token_atual) == ',':
+            self.avanca()
+            self.parse_declaracao_inicial()
 
-    def parse_initDeclarator(self):
-        """<initDeclarator> -> 'IDENT' [ '=' <expr> ]"""
+    def parse_declaracao_inicial(self):
+        """<declaracao_inicial> -> 'IDENT' [ '=' <expr> ]"""
         self.match('IDENT')
-        if self.get_token_type(self.current_token) == '=':
-            self.advance()
+        if self.get_tipo_token(self.token_atual) == '=':
+            self.avanca()
             self.parse_expr()
      
     def parse_identList(self):
@@ -211,52 +212,69 @@ class Parser:
 
     def parse_restoIdentList(self):
         """<restoIdentList> -> ',' 'IDENT' <restoIdentList> | & ;"""
-        while self.get_token_type(self.current_token) == ',':
-            self.advance()
+        while self.get_tipo_token(self.token_atual) == ',':
+            self.avanca()
             self.match('IDENT')
 
     def parse_forStmt(self):
+        print("Entrou")
         """<forStmt> -> 'for' '(' <optAtrib> ';' <optExpr> ';' <optAtrib> ')' <stmt> ;"""
         self.match('for')
         self.match('(')
-        self.parse_optAtrib()
-        self.match(';')
-        self.parse_optExpr()
-        self.match(';')
-        self.parse_optAtrib()
-        self.match(')')
-        self.parse_stmt()
+        print("entrou1")
+        
+        self.parse_optAtrib()  # Primeiro componente
+        self.match(';') 
+        
+        self.parse_optExpr()  # Segundo componente
+        self.match(';')  
+        
+        self.parse_optAtrib()  # Terceiro componente
+        self.match(')') 
+        
+        self.parse_stmt()  # Corpo do for
 
     def parse_optAtrib(self):
         """<optAtrib> -> <atrib> | & ;"""
-        if self.get_token_type(self.current_token) == 'IDENT':
+        if self.get_tipo_token(self.token_atual) in ('int', 'float', 'string'):
+            self.parse_declaracao()
+        elif self.get_tipo_token(self.token_atual) == 'IDENT':
             self.parse_atrib()
-        # Produção vazia (epsilon) é permitida
+        else:
+            # Produção vazia, faz nada
+            pass
+
 
     def parse_atrib(self):
-        """<atrib> -> várias formas de atribuição."""
-        self.match('IDENT')
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('=', '+=', '-=', '*=', '/=', '%='):
-            self.advance()
-            self.parse_expr()
+        """<atrib> -> 'IDENT' <opAtrib> <expr> | declaração de tipo."""
+        if self.get_tipo_token(self.token_atual) in ('int', 'float', 'string'):
+            # Trata declarações de tipo, como "int i = 0;"
+            self.parse_declaracao()
         else:
-            self.error("Operador de atribuição esperado")
-            
+            # Trata atribuições padrão, como "i = 0;"
+            self.match('IDENT')  # Verifica que é um identificador
+            tipo_atual = self.get_tipo_token(self.token_atual)
+            if tipo_atual in ('=', '+=', '-=', '*=', '/=', '%='):
+                self.avanca()  # Avança para o operador
+                self.parse_expr()  # Processa a expressão
+            else:
+                self.error("Operador de atribuição esperado")
+
     def parse_optExpr(self):
         """<optExpr> -> <expr> | & ;"""
-        if self.is_first_of_expr():
+        if self.primeiro_expr():
             self.parse_expr()
+            print(f"Condição processada: {self.token_atual}, posição: {self.pos}")
         #epsilon é permitido
 
-    def is_first_of_expr(self):
+    def primeiro_expr(self):
         """Verifica se o token atual pode iniciar uma expressão."""
-        first_tokens = {
+        primeiro_token = {
             'IDENT', 'NUMint', 'NUMfloat', 'NUMoct', 'NUMhex', 'STR',
             '+', '-', '!', '('
         }
-        current_type = self.get_token_type(self.current_token)
-        return current_type in first_tokens
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        return tipo_atual in primeiro_token
 
     def parse_expr(self):
         """<expr> -> <or> ;"""
@@ -269,8 +287,8 @@ class Parser:
 
     def parse_restoOr(self):
         """<restoOr> -> '||' <and> <restoOr> | & ;"""
-        while self.get_token_type(self.current_token) == '||':
-            self.advance()
+        while self.get_tipo_token(self.token_atual) == '||':
+            self.avanca()
             self.parse_and()
 
     def parse_and(self):
@@ -280,14 +298,14 @@ class Parser:
 
     def parse_restoAnd(self):
         """<restoAnd> -> '&&' <not> <restoAnd> | & ;"""
-        while self.get_token_type(self.current_token) == '&&':
-            self.advance()
+        while self.get_tipo_token(self.token_atual) == '&&':
+            self.avanca()
             self.parse_not()
 
     def parse_not(self):
         """<not> -> '!' <not> | <rel> ;"""
-        if self.get_token_type(self.current_token) == '!':
-            self.advance()
+        if self.get_tipo_token(self.token_atual) == '!':
+            self.avanca()
             self.parse_not()
         else:
             self.parse_rel()
@@ -299,9 +317,9 @@ class Parser:
 
     def parse_restoRel(self):
         """<restoRel> -> operadores relacionais ou vazio."""
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('==', '!=', '<', '<=', '>', '>='):
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('==', '!=', '<', '<=', '>', '>='):
+            self.avanca()
             self.parse_add()
         # Produção vazia (epsilon) é permitida
 
@@ -312,8 +330,8 @@ class Parser:
 
     def parse_restoAdd(self):
         """<restoAdd> -> '+' <mult> <restoAdd> | '-' <mult> <restoAdd> | & ;"""
-        while self.get_token_type(self.current_token) in ('+', '-'):
-            self.advance()
+        while self.get_tipo_token(self.token_atual) in ('+', '-'):
+            self.avanca()
             self.parse_mult()
 
     def parse_mult(self):
@@ -323,26 +341,26 @@ class Parser:
 
     def parse_restoMult(self):
         """<restoMult> -> '*' <uno> <restoMult> | '/' <uno> <restoMult> | '%' <uno> <restoMult> | & ;"""
-        while self.get_token_type(self.current_token) in ('*', '/', '%', '/*'):
-            self.advance()
+        while self.get_tipo_token(self.token_atual) in ('*', '/', '%', '/*'):
+            self.avanca()
             self.parse_uno()        
 
     def parse_uno(self):
         """<uno> -> '+' <uno> | '-' <uno> | <fator> ;"""
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('+', '-'):
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('+', '-'):
+            self.avanca()
             self.parse_uno()
         else:
             self.parse_fator()
 
     def parse_fator(self):
         """<fator> -> várias possibilidades de fator."""
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('NUMint', 'NUMfloat', 'NUMoct', 'NUMhex', 'IDENT', 'STR'):
-            self.advance()
-        elif current_type == '(':
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('NUMint', 'NUMfloat', 'NUMoct', 'NUMhex', 'IDENT', 'STR'):
+            self.avanca()
+        elif tipo_atual == '(':
+            self.avanca()
             self.parse_expr()
             self.match(')')
         else:
@@ -352,17 +370,17 @@ class Parser:
         """<ioStmt> -> comandos de entrada/saída."""
         self.match('system')
         self.match('.')
-        current_type = self.get_token_type(self.current_token)
-        if current_type == 'out':
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual == 'out':
+            self.avanca()
             self.match('.')
             self.match('print')
             self.match('(')
             self.parse_outList()
             self.match(')')
             self.match(';')
-        elif current_type == 'in':
-            self.advance()
+        elif tipo_atual == 'in':
+            self.avanca()
             self.match('.')
             self.match('scan')
             self.match('(')
@@ -379,16 +397,16 @@ class Parser:
 
     def parse_out(self):
         """<out> -> 'STR' | 'IDENT' | números ;"""
-        current_type = self.get_token_type(self.current_token)
-        if current_type in ('STR', 'IDENT', 'NUMint', 'NUMfloat', 'NUMoct', 'NUMhex'):
-            self.advance()
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('STR', 'IDENT', 'NUMint', 'NUMfloat', 'NUMoct', 'NUMhex'):
+            self.avanca()
         else:
             self.error("Elemento inválido em outList")
 
     def parse_restoOutList(self):
         """<restoOutList> -> ',' <out> <restoOutList> | & ;"""
-        while self.get_token_type(self.current_token) == ',':
-            self.advance()
+        while self.get_tipo_token(self.token_atual) == ',':
+            self.avanca()
             self.parse_out()
 
     def parse_whileStmt(self):
@@ -410,8 +428,8 @@ class Parser:
 
     def parse_elsePart(self):
         """<elsePart> -> 'else' <stmt> | & ;"""
-        if self.get_token_type(self.current_token) == 'else':
-            self.advance()
+        if self.get_tipo_token(self.token_atual) == 'else':
+            self.avanca()
             self.parse_stmt()
         #epsilon é permitido
 

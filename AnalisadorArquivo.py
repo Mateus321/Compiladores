@@ -96,72 +96,60 @@ def analisar_arquivo(file_path):
                     sys.exit(1)
                     
                     
-                #---------------------------------Tratamento de comentários / e /*  ---------------------------------
-                
-                
-                if caractere == "/": # se o caractere for uma barra
+                # --------------------------------- Tratamento de comentários // e /* ---------------------------------
+
+                if caractere == "/":  # se o caractere for uma barra
                     prox_caractere = f.read(1)
                     col_atual += 1 
-                    
-                    if prox_caractere == "/":  # se o proximo for uma barra
+
+                    if prox_caractere == "/":  # se o próximo for uma barra (comentário de linha)
                         comentario = "//"
-                        caractere = f.read(1) 
+                        caractere = f.read(1)
                         col_atual += 1
-                        
-                        while (caractere != "\n" and caractere):  # enquanto o caractere for diferente de \n e tiver caractere
-                            comentario += (caractere)
-                            caractere = f.read(1)  
+
+                        while caractere and caractere != "\n":  # enquanto o caractere for diferente de \n e não for None
+                            comentario += caractere
+                            caractere = f.read(1)
                             col_atual += 1
-                            
+
+                        # Armazena o token do comentário de linha
                         # tupla_token = ("50", comentario, linha_atual, col_atual)
                         # lista_de_tokens.append(tupla_token)
-                        
-                    elif (prox_caractere == "*"):  # se o próximo for um asterisco (início de um comentário de bloco)
+
+                    elif prox_caractere == "*":  # se o próximo for um asterisco (início de comentário de bloco)
                         comentario = "/*"
                         caractere = f.read(1)  # lê o próximo caractere após `/*`
                         col_atual += 1
-                        
+
                         while caractere:
-                            if caractere == "*":
-                                prox_caractere = f.read(1)  # olha o próximo caractere para verificar se é `/`
+                            if caractere == "*":  # verifica se é o fechamento de bloco
+                                prox_caractere = f.read(1)
                                 col_atual += 1
-                                
-                                if (prox_caractere == "/"):  # encontrou o final do comentário de bloco
-                                    comentario += "/"
+                                if prox_caractere == "/":  # encontrou o final do comentário de bloco
+                                    comentario += "*/"
+                                    caractere = f.read(1) #arrumei aqui pq ele le o proximo caractere e depois coloca a coluna
+                                    col_atual += 1 # coloca a coluna
                                     break
-                                
                                 else:
-                                    comentario += ("*")# adiciona `*` ao comentário e continua
+                                    comentario += "*"
                                     caractere = prox_caractere
-                                    
                             else:
-                                if (caractere == "\n"):  # se for uma nova linha, incrementa a linha e reseta a coluna
+                                if caractere == "\n":  # se for uma nova linha, incrementa a linha e reseta a coluna
                                     linha_atual += 1
                                     col_atual = 0
-                                    
-                                comentario += (caractere) # adiciona o caractere ao comentário
+
+                                comentario += caractere
                                 caractere = f.read(1)
                                 col_atual += 1
-                                
-                        else:
-                            print(f"Erro encontrado: Erro de comentário de bloco não fechado: Linha: {linha_atual}, Coluna: {col_atual}")
-                            return None  # Indica erro
-                            
-                        if comentario.startswith("//"):  # Se for um comentário de linha
-                            tupla_token = ("50", comentario, linha_atual, col_atual)
-                        
-                        elif comentario.startswith("/*") and comentario.endswith("*/"):  # Se for um comentário de bloco válido
-                            tupla_token = ("51", comentario, linha_atual, col_atual)
-                        
-                        elif comentario.startswith("/*") and not comentario.endswith("*/"):  # Se for um comentário de bloco não fechado
+
+                        else:  # caso o loop termine sem encontrar "*/"
                             print(f"Erro encontrado: Comentário de bloco não fechado. Linha: {linha_atual}, Coluna: {col_atual}")
                             return None  # Indica erro
 
-                        else:  # Caso tenha algum outro tipo de sequência inesperada
-                            print(f"Erro: Token inesperado encontrado. Linha: {linha_atual}, Coluna: {col_atual}")
-                            return None  # Indica erro
-                        
-                        lista_de_tokens.append(tupla_token)
+                        # # Armazena o token do comentário de bloco
+                        # tupla_token = ("51", comentario, linha_atual, col_atual)
+                        # lista_de_tokens.append(tupla_token)
+
                         
                     #---------------------------------Tratamento de operadores de atribuição---------------------------------
                     
