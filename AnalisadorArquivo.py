@@ -212,6 +212,7 @@ def analisar_arquivo(file_path):
                         tupla_token = (tipo_token, caractere + prox_caractere, linha_atual, col_atual)
                         lista_de_tokens.append(tupla_token)
                         col_atual += 2  # += e -= pula duas colunas
+                        continue
                         
                     elif caractere == "/":
                         continue

@@ -59,7 +59,7 @@ class Parser:
             self.token_atual = self.tokens[self.pos]
         else:
             self.token_atual = None  # Fim dos tokens
-            print("Fim dos tokens")
+            # print("Fim dos tokens")
                 
     def get_tipo_token(self, token):
         """Obtém o tipo do token a partir do código do token."""
@@ -222,8 +222,8 @@ class Parser:
         self.match('(')
         
         self.parse_optAtrib()  # Primeiro componente
+        self.match(';')
         
-    
         self.parse_optExpr()  # Segundo componente
         self.match(';')
 
@@ -240,6 +240,7 @@ class Parser:
         
         elif self.get_tipo_token(self.token_atual) == 'IDENT':
             self.parse_atrib()
+            # print(self.token_atual)
         
         else:
             pass  # Produção vazia
@@ -363,7 +364,8 @@ class Parser:
             self.parse_expr()
             self.match(')')
         else:
-            self.error("Fator inválido")
+            #print par ver oq ta cehgadno
+            self.error(f"Fator inválido '{self.token_atual}'")
 
     def parse_ioStmt(self):
         """<ioStmt> -> comandos de entrada/saída."""
@@ -383,7 +385,9 @@ class Parser:
             self.match('.')
             self.match('scan')
             self.match('(')
-            self.parse_outList()
+            self.parse_type() # ve se é int, float ou string
+            self.match(',')
+            self.match('IDENT')
             self.match(')')
             self.match(';')
         else:
@@ -400,7 +404,7 @@ class Parser:
         if tipo_atual in ('STR', 'IDENT', 'NUMint', 'NUMfloat', 'NUMoct', 'NUMhex'):
             self.avanca()
         else:
-            self.error("Elemento inválido em outList")
+            self.error(f"Elemento inválido em outList: '{self.token_atual}' (tipo: {tipo_atual})")
 
     def parse_restoOutList(self):
         """<restoOutList> -> ',' <out> <restoOutList> | & ;"""

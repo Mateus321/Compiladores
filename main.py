@@ -13,12 +13,12 @@ if __name__ == "__main__":
         
         #imprimir essa lista de tokens com quebra de linha
         print("\n".join(str(token) for token in lista_de_tokens[0]))
-        print("Final da análise léxica")
+        print("\nFinal da análise léxica")
 
         #chamar o parser
         
         try:
             parse_function_star(lista_de_tokens[0])
-            print("Análise sintática concluída com sucesso")
+            print("\nAnálise sintática concluída com sucesso\n")
         except Exception as e:
             print(f"Erro na análise sintática: {e}")
