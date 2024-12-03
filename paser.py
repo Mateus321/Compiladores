@@ -80,6 +80,7 @@ class Parser:
     def match(self, tipo_esperado):
         """Verifica se o token atual é do tipo esperado e avança."""
         tipo_atual = self.get_tipo_token(self.token_atual)
+        
         if tipo_atual == tipo_esperado:
             self.avanca()
         else:
@@ -186,9 +187,8 @@ class Parser:
   
     def parse_declaracao(self):
         """<declaracao> -> <type> <lista_declarador_iniciado> ';' ;"""
-        # print("Entrou")
         self.parse_type()
-        self.parse_lista_declarador_iniciado()
+        self.parse_lista_declarador_iniciado()  
         self.match(';')
         
     def parse_lista_declarador_iniciado(self):
@@ -217,55 +217,53 @@ class Parser:
             self.match('IDENT')
 
     def parse_forStmt(self):
-        print("Entrou")
         """<forStmt> -> 'for' '(' <optAtrib> ';' <optExpr> ';' <optAtrib> ')' <stmt> ;"""
         self.match('for')
         self.match('(')
-        print("entrou1")
         
         self.parse_optAtrib()  # Primeiro componente
-        self.match(';') 
         
+    
         self.parse_optExpr()  # Segundo componente
-        self.match(';')  
-        
+        self.match(';')
+
         self.parse_optAtrib()  # Terceiro componente
-        self.match(')') 
+        self.match(')')
         
         self.parse_stmt()  # Corpo do for
+
 
     def parse_optAtrib(self):
         """<optAtrib> -> <atrib> | & ;"""
         if self.get_tipo_token(self.token_atual) in ('int', 'float', 'string'):
             self.parse_declaracao()
+        
         elif self.get_tipo_token(self.token_atual) == 'IDENT':
             self.parse_atrib()
+        
         else:
-            # Produção vazia, faz nada
-            pass
+            pass  # Produção vazia
+
 
 
     def parse_atrib(self):
-        """<atrib> -> 'IDENT' <opAtrib> <expr> | declaração de tipo."""
-        if self.get_tipo_token(self.token_atual) in ('int', 'float', 'string'):
-            # Trata declarações de tipo, como "int i = 0;"
-            self.parse_declaracao()
+        """<atrib> -> 'IDENT' <opAtrib> <expr> ;"""
+        self.match('IDENT')  # Identificador
+        tipo_atual = self.get_tipo_token(self.token_atual)
+        if tipo_atual in ('=', '+=', '-=', '*=', '/=', '%='):
+            self.avanca()  # Avança o operador de atribuição
+            self.parse_expr()  # Analisa a expressão
         else:
-            # Trata atribuições padrão, como "i = 0;"
-            self.match('IDENT')  # Verifica que é um identificador
-            tipo_atual = self.get_tipo_token(self.token_atual)
-            if tipo_atual in ('=', '+=', '-=', '*=', '/=', '%='):
-                self.avanca()  # Avança para o operador
-                self.parse_expr()  # Processa a expressão
-            else:
-                self.error("Operador de atribuição esperado")
+            self.error("Operador de atribuição esperado")
+
 
     def parse_optExpr(self):
         """<optExpr> -> <expr> | & ;"""
         if self.primeiro_expr():
             self.parse_expr()
-            print(f"Condição processada: {self.token_atual}, posição: {self.pos}")
-        #epsilon é permitido
+        else:
+            self.parse_expr()
+
 
     def primeiro_expr(self):
         """Verifica se o token atual pode iniciar uma expressão."""
@@ -275,6 +273,7 @@ class Parser:
         }
         tipo_atual = self.get_tipo_token(self.token_atual)
         return tipo_atual in primeiro_token
+
 
     def parse_expr(self):
         """<expr> -> <or> ;"""
