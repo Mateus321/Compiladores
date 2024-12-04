@@ -1,3 +1,5 @@
+# Para rodar o projeto coloque python3 main.py aTeste.java
+
 import sys  # acessa os argumentos da linha de comando
 import os  # verifica se o arquivo existe antes de abrir
 from AnalisadorArquivo import analisar_arquivo
