@@ -4,6 +4,8 @@ import sys  # acessa os argumentos da linha de comando
 import os  # verifica se o arquivo existe antes de abrir
 from AnalisadorArquivo import analisar_arquivo
 from paser import parse_function_star
+from interpretador import Interpretador
+
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -21,6 +23,18 @@ if __name__ == "__main__":
         
         try:
             parse_function_star(lista_de_tokens[0])
-            print("\nAnálise sintática concluída com sucesso\n")
+            print("\nAnálise sintática concluída com sucesso!\n")
+            
         except Exception as e:
             print(f"Erro na análise sintática: {e}")
+
+        
+        
+        try:
+            interpretador = Interpretador()
+            interpretador.carregar_tuplas(lista_de_tokens[0])
+            print("\nInterpretador finalizado com sucesso!\n")
+            interpretador.executar()
+
+        except Exception as e:
+            print(f"Erro no interpretador: {e}")
