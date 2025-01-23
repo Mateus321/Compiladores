@@ -4,6 +4,7 @@ import sys  # acessa os argumentos da linha de comando
 import os  # verifica se o arquivo existe antes de abrir
 from AnalisadorArquivo import analisar_arquivo
 from paser import parse_function_star
+from converter_token import instrucoes_interpretador
 from interpretador import Interpretador
 
 
@@ -31,10 +32,16 @@ if __name__ == "__main__":
         
         
         try:
-            interpretador = Interpretador()
-            interpretador.carregar_tuplas(lista_de_tokens[0])
-            print("\nInterpretador finalizado com sucesso!\n")
-            interpretador.executar()
+            # Exibir as instruções geradas
+                    print("\nInstruções para o interpretador:")
+                    for instrucao in instrucoes_interpretador:
+                        print(instrucao)
+
+                    # Executar o interpretador
+                    interpretador = Interpretador()
+                    interpretador.carregar_tuplas(instrucoes_interpretador)
+                    print("\nIniciando execução do interpretador:")
+                    interpretador.executar()
 
         except Exception as e:
             print(f"Erro no interpretador: {e}")
