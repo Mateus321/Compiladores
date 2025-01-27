@@ -50,4 +50,7 @@ def converter_tokens_para_instrucoes(tokens_lexicos):
         elif lexema.isnumeric():
             instrucoes.append(("=", "var_temp", int(lexema), None))
 
+    
+    print("teste? \n", instrucoes)
+    
     return instrucoes
