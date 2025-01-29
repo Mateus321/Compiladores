@@ -1,5 +1,10 @@
-
-int main(){
+int main() {
     int a;
-    a = 1;
+    a = 3;
+
+    if (a > 3) {
+        a = a + 2;
+    } else {    
+        a = a - 2;
+    }
 }

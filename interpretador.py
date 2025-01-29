@@ -1,128 +1,141 @@
-from Biblioteca import (
-    OPERADOR_ARITMETICO,
-    OPERADOR_LOGICO,
-    OPERADOR_RELACIONAL,
-    PALAVRAS_RESERVADAS,
-    SIMBOLOS_ACEITOS,
-)
+# Classe Interpretador para executar o código intermediário
+class Interp:
+    def __init__(self, fonte=None):
+        # Memória de variáveis
+        self.mem = {}
+        # Rótulos (para controle de fluxo)
+        self.rotulos = {}
+        # Ponteiro de instrução
+        self.ip = 0
+        # Lista de instruções
+        self.instrucoes = []
+        # Controle de execução
+        self.executando = True
 
-class Interpretador:
-    def __init__(self):
-        self.variaveis = {}  # Armazena variáveis e valores
-        self.ponteiro = 0  # Controla a posição de execução
-        self.tuplas = []  # Lista de tuplas a executar
-        self.labels = {}  # Armazena as posições dos labels
-
-    def carregar_tuplas(self, tuplas):
-        """Carrega a lista de tuplas e processa os labels."""
-        self.tuplas = tuplas
-        for index, instrucao in enumerate(tuplas):
-            if instrucao[0] == "LABEL":
-                self.labels[instrucao[1]] = index
-
-    def executar(self):
-        """Executa as tuplas na ordem, respeitando alterações de fluxo."""
-        while self.ponteiro < len(self.tuplas):
-            instrucao = self.tuplas[self.ponteiro]
-            self.processar_instrucao(instrucao)
-
-    def processar_instrucao(self, instrucao):
-        """Processa uma única instrução com base no operador."""
-        operador = instrucao[0]
-        if operador in OPERADOR_ARITMETICO:
-            self.processar_aritmetica(instrucao)
-        elif operador in OPERADOR_LOGICO:
-            self.processar_logica(instrucao)
-        elif operador in OPERADOR_RELACIONAL:
-            self.processar_relacional(instrucao)
-        elif operador == "IF":
-            self.processar_condicional(instrucao)
-        elif operador == "JUMP":
-            self.processar_jump(instrucao)
-        elif operador == "CALL":
-            self.processar_chamada(instrucao)
-        elif operador == "=":
-            self.processar_atribuicao(instrucao)
-        self.ponteiro += 1
-
-    def processar_aritmetica(self, instrucao):
-        """Processa operadores aritméticos."""
-        operador, guardar, op1, op2 = instrucao
-        valor1 = self.get_valor(op1)
-        valor2 = self.get_valor(op2) if op2 is not None else 0
-
-        if operador == "+":
-            self.variaveis[guardar] = valor1 + valor2
-        elif operador == "-":
-            self.variaveis[guardar] = valor1 - valor2
-        elif operador == "*":
-            self.variaveis[guardar] = valor1 * valor2
-        elif operador == "/":
-            self.variaveis[guardar] = valor1 / valor2
-        elif operador == "%":
-            self.variaveis[guardar] = valor1 % valor2
-
-    def processar_logica(self, instrucao):
-        """Processa operadores lógicos."""
-        operador, guardar, op1, op2 = instrucao
-        valor1 = self.get_valor(op1)
-        valor2 = self.get_valor(op2) if op2 is not None else None
-
-        if operador == "||":
-            self.variaveis[guardar] = valor1 or valor2
-        elif operador == "&&":
-            self.variaveis[guardar] = valor1 and valor2
-        elif operador == "!":
-            self.variaveis[guardar] = not valor1
-
-    def processar_relacional(self, instrucao):
-        """Processa operadores relacionais."""
-        operador, guardar, op1, op2 = instrucao
-        valor1 = self.get_valor(op1)
-        valor2 = self.get_valor(op2)
-
-        if operador == "==":
-            self.variaveis[guardar] = valor1 == valor2
-        elif operador == "!=":
-            self.variaveis[guardar] = valor1 != valor2
-        elif operador == ">":
-            self.variaveis[guardar] = valor1 > valor2
-        elif operador == "<":
-            self.variaveis[guardar] = valor1 < valor2
-        elif operador == ">=":
-            self.variaveis[guardar] = valor1 >= valor2
-        elif operador == "<=":
-            self.variaveis[guardar] = valor1 <= valor2
-
-    def processar_condicional(self, instrucao):
-        """Processa instruções do tipo IF."""
-        _, condicao, label_true, label_false = instrucao
-        if self.get_valor(condicao):
-            self.ponteiro = self.labels[label_true]
+        # Carrega instruções de um arquivo ou de uma lista
+        if isinstance(fonte, str):
+            with open(fonte, 'r') as f:
+                linhas = f.readlines()
+                for linha in linhas:
+                    instr = eval(linha.strip(', \n'))
+                    if isinstance(instr, tuple):
+                        self.instrucoes.append(instr)
+                    else:
+                        raise ValueError("Instrucao invalida: " + linha.strip(', \n'))
+        elif isinstance(fonte, list):
+            self.instrucoes = fonte
         else:
-            self.ponteiro = self.labels[label_false]
+            raise ValueError("Fonte invalida, deve ser um caminho de arquivo ou uma lista de instrucoes.")
 
-    def processar_jump(self, instrucao):
-        """Processa instruções do tipo JUMP."""
-        _, label, _, _ = instrucao
-        self.ponteiro = self.labels[label]
+    def iniciar(self):
+        """Inicia a execução das instruções"""
+        self.preprocessar_rotulos()
 
-    def processar_chamada(self, instrucao):
-        """Processa chamadas de sistema."""
-        _, comando, valor, _ = instrucao
-        if comando == "PRINT":
-            print(self.get_valor(valor))
-        elif comando == "SCAN":
-            entrada = input("Digite um valor: ")
-            self.variaveis[valor] = entrada
+        while self.executando and self.ip < len(self.instrucoes):
+            instrucao = self.instrucoes[self.ip]
+            self.ip += 1
+            self.executar(instrucao)
 
-    def processar_atribuicao(self, instrucao):
-        """Processa instruções de atribuição."""
-        _, guardar, valor, _ = instrucao
-        self.variaveis[guardar] = self.get_valor(valor)
+    def preprocessar_rotulos(self):
+        """Armazena os rótulos (LABEL) e suas posições"""
+        for i, instr in enumerate(self.instrucoes):
+            if instr[0] == "LABEL":
+                self.rotulos[instr[1]] = i
 
-    def get_valor(self, token):
-        """Retorna o valor de uma variável ou o próprio token, se for um literal."""
-        if isinstance(token, str) and token in self.variaveis:
-            return self.variaveis[token]
-        return token
+    def executar(self, instr):
+        """Executa uma única instrução"""
+        op, destino, op1, op2 = instr
+
+        # DECLARE (declaração de variável)
+        if op == "DECLARE":
+            self.mem[destino] = 0 if op1 == "int" else (0.0 if op1 == "float" else "")
+
+        # ASSIGN (atribuição simples)
+        elif op == "ASSIGN" or op == "=":
+            self.mem[destino] = self.obter_valor(op1)
+
+        # Operações aritméticas (agora processa corretamente)
+        elif op in {"+", "-", "*", "/", "%", "//"}:
+            val1 = self.obter_valor(op1)
+            val2 = self.obter_valor(op2)
+            resultado = self.fazer_aritmetica(op, val1, val2)
+            self.mem[destino] = resultado  # ✅ Salva o resultado na memória
+            self.mostrar_resultado(op, resultado)
+
+        # Operações lógicas e relacionais
+        elif op in {"||", "&&", "!", "==", "<>", ">", "<", ">=", "<="}:
+            val1 = self.obter_valor(op1)
+            val2 = self.obter_valor(op2) if op2 else None
+            self.mem[destino] = self.fazer_logica(op, val1, val2)
+
+        # IF e JUMP (controle de fluxo)
+        elif op == "IF":
+            condicao = self.obter_valor(destino)  # Obtém o valor da comparação
+            if condicao:
+                self.ip = self.rotulos[op1]  # Vai para LABEL_TRUE
+            else:
+                self.ip = self.rotulos[op2]  # Vai para LABEL_FALSE
+
+        elif op == "JUMP":
+            self.ip = self.rotulos[destino]  # Pula para o label indicado
+            
+        # LABEL (rótulos são ignorados em tempo de execução)
+        elif op == "LABEL":
+            return  # ignora LABEL e continua
+            
+        # PRINT e SCAN
+        elif op == "CALL":
+            if destino == "PRINT":
+                print(self.obter_valor(op1))
+            elif destino == "SCAN":
+                self.mem[op1] = input("Digite um valor: ")
+
+        # STOP (encerra a execução)
+        elif op == "STOP":
+            self.executando = False
+
+        else:
+            raise ValueError("Operacao desconhecida: " + str(op))
+
+
+    def fazer_aritmetica(self, op, v1, v2):
+        """Executa operações matemáticas"""
+        return {
+            "+": v1 + v2,
+            "-": v1 - v2,
+            "*": v1 * v2,
+            "/": v1 / v2,
+            "%": v1 % v2,
+            "//": v1 // v2
+        }[op]
+
+    def fazer_logica(self, op, v1, v2):
+        """Executa operações lógicas e relacionais"""
+        return {
+            "||": v1 or v2,
+            "&&": v1 and v2,
+            "!": not v1,
+            "==": v1 == v2,
+            "<>": v1 != v2,
+            ">": v1 > v2,
+            "<": v1 < v2,
+            ">=": v1 >= v2,
+            "<=": v1 <= v2
+        }[op]
+
+    def obter_valor(self, op):
+        """Retorna o valor de um operando"""
+        if op is None:
+            return None
+        try:
+            return float(op) if "." in str(op) else int(op)
+        except ValueError:
+            return self.mem.get(op, None)
+
+    def mostrar_instrucao(self, op, destino, op1, op2):
+        # mostra passo
+        print(f"OP: {op} DEST: {destino} OP1: {op1} OP2: {op2 if op2 else 'None'}")
+
+    def mostrar_resultado(self, op, res):
+        # mostra resultado de operacao
+        print(f"RESULT {op}: {res}")
